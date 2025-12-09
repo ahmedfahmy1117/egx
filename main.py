@@ -1,0 +1,73 @@
+from hybrid import HybridModel
+from indicators import TechnicalIndicators
+
+# 1) تحميل قائمة الأسهم
+symbols = [
+    "EGX:SUCE", "EGX:DCRC", "EGX:GOCO", "EGX:ELNA", "EGX:CFGH", "EGX:TALM",
+    "EGX:APSW", "EGX:AIFI", "EGX:ACAMD", "EGX:SCTS", "EGX:QNBE", "EGX:BTFH",
+    "EGX:DTPP", "EGX:AFDI", "EGX:DOMT", "EGX:EGBE", "EGX:ROTO", "EGX:EPPK",
+    "EGX:GRCA", "EGX:VALU", "EGX:CANA", "EGX:OIH", "EGX:JUFO", "EGX:CCAP",
+    "EGX:RACC", "EGX:FWRY", "EGX:UBEE", "EGX:EGCH", "EGX:CPCI", "EGX:LCSW",
+    "EGX:WCDF", "EGX:AIHC", "EGX:SNFC", "EGX:OFH", "EGX:CCRS", "EGX:CIEB",
+    "EGX:ZMID", "EGX:RTVC", "EGX:SPIN", "EGX:PHTV", "EGX:PHAR", "EGX:TMGH",
+    "EGX:OCDI", "EGX:EFIC", "EGX:UEFM", "EGX:AMES", "EGX:MBSC", "EGX:ADIB",
+    "EGX:BINV", "EGX:ORWE", "EGX:ADCI", "EGX:NAHO", "EGX:FAIT", "EGX:RREI",
+    "EGX:MCRO", "EGX:AREH", "EGX:IBCT", "EGX:PHDC", "EGX:ENGC", "EGX:MPRC",
+    "EGX:SDTI", "EGX:MEPA", "EGX:RUBX", "EGX:EBSC", "EGX:GGRN", "EGX:ARAB",
+    "EGX:SUGR", "EGX:ZEOT", "EGX:WKOL", "EGX:NCCW", "EGX:EGAL", "EGX:SCFM",
+    "EGX:PHGC", "EGX:ABUK", "EGX:RAYA", "EGX:FERC", "EGX:EHDR", "EGX:EAST",
+    "EGX:INFI", "EGX:AIDC", "EGX:MOIN", "EGX:KWIN", "EGX:MBEG", "EGX:OBRI",
+    "EGX:ATQA", "EGX:GSSC", "EGX:AFMC", "EGX:TANM", "EGX:ISMA", "EGX:GIHD",
+    "EGX:IEEC", "EGX:ACAP", "EGX:PRCL", "EGX:GTEX", "EGX:CEFM", "EGX:ACRO",
+    "EGX:CRST", "EGX:SCEM", "EGX:EXPA", "EGX:MCQE", "EGX:CLHO", "EGX:ORAS",
+    "EGX:EALR", "EGX:MASR", "EGX:ELKA", "EGX:DAPH", "EGX:MHOT", "EGX:NAPR",
+    "EGX:MPCI", "EGX:UNIT", "EGX:EIUD", "EGX:OLFI", "EGX:BIDI", "EGX:UNIP",
+    "EGX:EEII", "EGX:ELEC", "EGX:ORHD", "EGX:ASCM", "EGX:CERA", "EGX:NARE",
+    "EGX:HELI", "EGX:ARCC", "EGX:KZPC", "EGX:ASPI", "EGX:NHPS", "EGX:PRDC",
+    "EGX:EDFM", "EGX:POUL", "EGX:KRDI", "EGX:GTWL", "EGX:SKPC", "EGX:BIOC",
+    "EGX:MFPC", "EGX:ANFI", "EGX:ISPH", "EGX:EKHOA", "EGX:SPMD", "EGX:INEG",
+    "EGX:ADPC", "EGX:EGAS", "EGX:ACTF", "EGX:MAAL", "EGX:ICFC", "EGX:MICH",
+    "EGX:HBCO", "EGX:AMIA", "EGX:COPR", "EGX:SAUD", "EGX:CIRA", "EGX:NIPH",
+    "EGX:NINH", "EGX:ELSH", "EGX:GBCO", "EGX:EASB", "EGX:HRHO", "EGX:GGCC",
+    "EGX:ICID", "EGX:CNFN", "EGX:MIPH", "EGX:EGTS", "EGX:EMFD", "EGX:SMFR",
+    "EGX:AALR", "EGX:ALUM", "EGX:ISMQ", "EGX:EFID", "EGX:HDBK", "EGX:SWDY",
+    "EGX:GDWA", "EGX:TAQA", "EGX:UEGC", "EGX:AMOC", "EGX:ARVA", "EGX:AMER",
+    "EGX:KABO", "EGX:BONY", "EGX:ALCN", "EGX:RMDA", "EGX:ACGC", "EGX:MENA",
+    "EGX:MOSC", "EGX:ECAP", "EGX:OCPH", "EGX:MPCO", "EGX:DSCW", "EGX:ATLC",
+    "EGX:EPCO", "EGX:ETEL", "EGX:CSAG", "EGX:CICH", "EGX:AJWA", "EGX:CAED",
+    "EGX:COMI", "EGX:SVCE", "EGX:EFIH", "EGX:IFAP", "EGX:SIPC", "EGX:MOED",
+    "EGX:IDRE", "EGX:ODIN", "EGX:PRMH", "EGX:MILS", "EGX:ETRS", "EGX:COSG",
+    "EGX:SEIG", "EGX:GPPL", "EGX:DEIN"
+]
+
+# 2) إنشاء كلاسين التحليل
+ind = TechnicalIndicators()
+hyb = HybridModel()
+
+results = []
+
+# 3) تحليل كل سهم
+for symbol in symbols:
+    print(f"\n🔎 تحليل السهم: {symbol}")
+
+    data = ind.get_all_timeframes(symbol)
+
+    if data is None:
+        print("❌ No Data — سيتم تجاهل السهم")
+        continue
+
+    score, notes = hyb.calculate_score(data)
+
+    results.append((symbol, score, notes))
+
+# 4) ترتيب النتائج
+results_sorted = sorted(results, key=lambda x: x[1], reverse=True)
+
+print("\n======================")
+print("🚀 أفضل التوصيات:")
+print("======================")
+
+for sym, sc, nt in results_sorted:
+    print(f"{sym} — SCORE = {sc}")
+    print("Notes:", nt)
+    print("--------------------")
